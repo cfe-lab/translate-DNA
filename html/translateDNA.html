@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<link rel="stylesheet" href="../css/style.css">
+		<title>Fasta Converter</title>
+	</head>
+	<body>
+		<div class="container">
+			<form action="../cgi-bin/translateDNA.py" method="post" id="mainform">
+				<textarea name="userinput" placeholder="Enter DNA sequence here" required></textarea>
+				<button value="on" name="runtranslate" type="submit" form="mainform">Translate</button>
+			</form>
+		</div>
+	</body>
+</html>
