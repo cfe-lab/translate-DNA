@@ -1,5 +1,4 @@
 #!/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin/python
-# Random comment
 import cgi
 
 form = cgi.FieldStorage()
@@ -82,6 +81,17 @@ if (runtranslate is not None):
 	<head>
 	<link rel="stylesheet" href="../css/style.css">
 	</head>
-	<body><div class="container">"""
-	print "'{}'".format(translateDNA(userinput))
+	<body><div class="container word-wrap">"""
+	lines = userinput.translate(None,'\r').split('\n')
+	# Single sequence
+	if (len(lines) == 1):
+		aa = translateDNA(lines[0])
+		print "{}".format(('').join(aa))
+	# Multiple sequences per line
+	elif (len(lines) > 1):
+		print "<table>"
+		for sequence in lines:
+			aa = translateDNA(sequence)
+			print "<tr><td>{}</td></tr>".format(('').join(aa))
+		print "</table>"
 	print "</div></body></html>"
