@@ -1,5 +1,74 @@
 @import "bootstrap";
 
+$theme: #BADA55;
+
+@mixin border-radius($values) {
+	-moz-border-radius: $values;
+	-webkit-border-radius: $values;
+	border-radius: $values;
+}
+
+@mixin appearance($value) {
+	-webkit-appearance: $value;
+	-moz-appearance: $value;
+	appearance: $value;
+}
+
+.spacer {
+	margin: 10px 0 0 0;
+}
+
 .word-wrap {
 	word-break: break-all;
+}
+
+textarea {
+	padding: 20px;
+	display: block;
+	margin: 0 auto;
+	border: none;
+	width: 100%;
+	@include border-radius(50px 0 50px 0);
+	min-height: 200px;
+	background-color: #E9E9E9;
+	@include transition(background-color ease-out 0.1s);
+	&:focus {
+		outline: none;
+		background-color: lighten($theme,20%);
+		@include transition(background-color ease-out 0.1s);
+	}
+}
+
+.btn-red {
+	$colour: #FF6666;
+	background-color: $colour;
+	color: white;
+	&:hover {
+		background-color: lighten($colour, 10%);
+	}
+	&:active {
+		background-color: $colour;
+		outline: none;
+	}
+}
+
+.btn-round-sm {
+	@include border-radius(2px);
+}
+
+.btn-large {
+	padding: 10px 20px;
+	&:active {
+		padding: 8px 18px;
+		margin: 2px 0 0 2px;
+	}
+}
+
+.btn-blank {
+	@include appearance(none);
+	border: none;
+}
+
+.col-bottom {
+	vertical-align: bottom;
 }
