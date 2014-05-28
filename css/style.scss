@@ -39,18 +39,23 @@ textarea {
 	}
 }
 
-.btn-red {
-	$colour: #FF6666;
-	background-color: $colour;
-	color: white;
-	&:hover {
-		background-color: lighten($colour, 10%);
-	}
-	&:active {
+@mixin btn($name,$colour) {
+	.btn-#{$name} {
 		background-color: $colour;
-		outline: none;
+		color: #FFF;
+		&:hover {
+			background-color: lighten($colour, 10%);
+		}
+		&:active {
+			background-color: $colour;
+			outline: none;
+		}
 	}
 }
+
+@include btn('red', #FF6666);
+@include btn('green', #BADA55);
+@include btn('blue', #33B5E5);
 
 .btn-round-sm {
 	@include border-radius(2px);
@@ -69,6 +74,12 @@ textarea {
 	border: none;
 }
 
-.col-bottom {
-	vertical-align: bottom;
+.title {
+	h1, p {
+		display: inline-block;
+	}
+	p {
+		margin-left: 30px;
+		font-style: italic;
+	}
 }

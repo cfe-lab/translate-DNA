@@ -7,22 +7,16 @@
 	</head>
 	<body>
 		<div class="container">
-			<div class="row">
-				<div class="col-md-3">
-					<div class="title">
-						<h1>DNA Translator</h1>
-					</div>
-				</div>
-				<div class="col-md-9 col-bot">
-					<p>
-						Description
-					</p>
-				</div>
+			<div class="title">
+				<h1>DNA Translator</h1>
+				<p>
+					Translate one or more lines of DNA sequence[s] into their corresponding amino acids
+				</p>
 			</div>
 			<form action="../cgi-bin/translateDNA.py" method="post" id="mainform">
 				<textarea name="userinput" placeholder="Enter DNA sequence or multi-line sequences here" required autofocus></textarea>
 				<div class="spacer"></div>
-				<button class="btn-large btn-blank btn-round-sm btn-red" value="on" name="runtranslate" type="submit" form="mainform">Translate</button>
+				<button class="btn-large btn-blank btn-round-sm btn-blue" value="on" name="runtranslate" type="submit" form="mainform">Translate</button>
 			</form>
 		</div>
 	</body>
