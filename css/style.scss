@@ -126,7 +126,8 @@ textarea {
 		left: 0;
 	}
 	&:checked + label {
-		background-color: complement(lighten($theme,30%));
+		color: #FFF;
+		background-color: #646464;
 		@include box-shadow(5px 5px 5px 0 grey);
 		@include transition(all ease-out 0.2s);
 		position: relative;

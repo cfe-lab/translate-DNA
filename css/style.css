@@ -5108,7 +5108,8 @@ textarea, input[type="text"].large {
     top: 0;
     left: 0; }
   .radio-button:checked + label {
-    background-color: #ebadeb;
+    color: #FFF;
+    background-color: #646464;
     -webkit-box-shadow: 5px 5px 5px 0 grey;
     box-shadow: 5px 5px 5px 0 grey;
     -webkit-transition: all ease-out 0.2s;
