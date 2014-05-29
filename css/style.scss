@@ -1,6 +1,13 @@
 @import "bootstrap";
 
-$theme: #BADA55;
+$theme: #33CC33;
+
+@mixin placeholder {
+	&::-webkit-input-placeholder {@content}
+	&:-moz-placeholder {@content}
+	&::-moz-placeholder {@content}
+	&:-ms-input-placeholder {@content}
+}
 
 @mixin border-radius($values) {
 	-moz-border-radius: $values;
@@ -31,11 +38,15 @@ textarea {
 	@include border-radius(50px 0 50px 0);
 	min-height: 200px;
 	background-color: #E9E9E9;
-	@include transition(background-color ease-out 0.1s);
+	@include transition(all ease-out 0.1s);
 	&:focus {
 		outline: none;
 		background-color: lighten($theme,20%);
-		@include transition(background-color ease-out 0.1s);
+		@include placeholder {
+			color: #FFF;
+			opacity: 1;
+		}
+		@include transition(all ease-out 0.1s);
 	}
 }
 
@@ -82,4 +93,51 @@ textarea {
 		margin-left: 30px;
 		font-style: italic;
 	}
+}
+
+.radio-wrapper {
+	display: inline-block;
+	&:not(.first) {
+		margin-left: 10px;
+	}
+	max-width: 200px;
+	position: relative;
+}
+
+.radio-label {
+	margin: 0;
+	font-weight: 300;
+	padding: 5px;
+	min-height: 110px;
+	vertical-align: top;
+}
+
+.radio-button {
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0;
+	z-index: 100;
+	+ label {
+		position: relative;
+		background-color: #E9E9E9;
+		@include transition(all ease-out 0.2s);
+		top: 0;
+		left: 0;
+	}
+	&:checked + label {
+		background-color: complement(lighten($theme,30%));
+		@include box-shadow(5px 5px 5px 0 grey);
+		@include transition(all ease-out 0.2s);
+		position: relative;
+		top: -5px;
+		left: -5px;
+	}
+}
+
+input[type="text"].large {
+	@extend textarea;
+	min-height: 0;
+	padding: 0 0 0 10px;
+	@include border-radius(0);
 }

@@ -16,6 +16,28 @@
 			<form action="../cgi-bin/translateDNA.py" method="post" id="mainform">
 				<textarea name="userinput" placeholder="Enter DNA sequence or multi-line sequences here" required autofocus></textarea>
 				<div class="spacer"></div>
+				<div class="row">
+					<div class="col-sm-8">
+						<h2>Mode Selection</h2>
+						<div class="radio-wrapper first">
+							<input class="radio-button" type="radio" id="r1" name="flagselection" checked value="2">
+							<label class="radio-label" for="r1">Resolve synonymous codons to their respective amino acids, and non-synonymous codons to the character specified in the "Resolve character" box</label>
+						</div>
+						<div class="radio-wrapper">
+							<input class="radio-button" type="radio" id="r2" name="flagselection" value="1">
+							<label class="radio-label" for="r2">Resolve all mixtures to the character specified in the "Resolve character" box</label>
+						</div>
+						<div class="radio-wrapper">
+							<input class="radio-button" type="radio" id="r3" name="flagselection" value="3">
+							<label class="radio-label" for="r3">Resolve all mixtures to all possible amino acids in the format [A/B/C]</label>
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<h2>Resolve character</h2>
+						<input class="large" type="text" name="resolvecharacter" placeholder="Enter single character" maxlength="1">
+					</div>
+				</div>
+				<div class="spacer"></div>
 				<button class="btn-large btn-blank btn-round-sm btn-blue" value="on" name="runtranslate" type="submit" form="mainform">Translate</button>
 			</form>
 		</div>

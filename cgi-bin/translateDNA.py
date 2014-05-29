@@ -4,6 +4,10 @@ import cgi
 form = cgi.FieldStorage()
 userinput = form.getvalue("userinput")
 runtranslate = form.getvalue("runtranslate")
+flagselection = int(form.getvalue("flagselection"))
+resolvecharacter = form.getvalue("resolvecharacter")
+if (resolvecharacter is None):
+	resolvecharacter = 'X'
 
 codon_dict = {'TTT':'F', 'TTC':'F', 'TTA':'L', 'TTG':'L',
 			  'TCT':'S', 'TCC':'S', 'TCA':'S', 'TCG':'S',
@@ -49,29 +53,40 @@ def resolveCodon(codon):
 # Flag = 1 will output all mixtures as "X"
 # Flag = 2 will output all synonymous mixtures as they are and all non-synonymous mixtures as "X"
 # Flag = 3 will output all mixtures in the format [A/B] if a mixture encodes for amino acid A or B
-def translateDNA(sequence, flag=2):
+def translateDNA(sequence, resolvecharacter, flag=2):
 	sequence = sequence.translate(None, ' \n\r\n').upper()
 	aaseq = []
 	# Check that the sequence can be divided into codons
 	if (len(sequence) % 3 != 0):
 		return "Error: sequence length not divisible by 3. Check that you have entire sequence entered"
-	# If user wants to output all synonymous mixtures as are, and all non-synonymous as "X"
-	if (flag == 2):
-		i = 0
-		while i < len(sequence):
-			codon = resolveCodon(sequence[i:i+3])
-			# If the codon has no mixture bases just add it to the amino acid chain
-			if len(codon) <= 1:
-				aaseq.append(codon_dict[codon[0]])
-			# Codon contains mixture base
-			else:
+	# If user wants to output all synonymous mixtures as are, and all non-synonymous as "resolvecharacter"
+	i = 0
+	while i < len(sequence):
+		codon = resolveCodon(sequence[i:i+3])
+		# If the codon has no mixture bases just add it to the amino acid chain
+		if len(codon) <= 1:
+			aaseq.append(codon_dict[codon[0]])
+		# Codon contains mixture base
+		else:
+			# If flag is set to 1
+			if (flag == 1):
+				aaseq.append(resolvecharacter)
+			# If flag is set to 2
+			elif (flag == 2):
 				unique = set([codon_dict[potential] for potential in codon])
 				# If there is more than resolved one amino acid
-				if len(unique) > 1:
-					aaseq.append("X")
+				if (len(unique) > 1):
+					aaseq.append(resolvecharacter)
 				else:
 					aaseq.append(unique.pop())
-			i += 3
+			# If flag is set to 3
+			else:
+				unique = set([codon_dict[potential] for potential in codon])
+				if (len(unique) > 1):
+					aaseq.append('['+('/').join(unique)+']')
+				else:
+					aaseq.append(unique.pop())
+		i += 3
 	return aaseq
 
 if (runtranslate is not None):
@@ -82,16 +97,17 @@ if (runtranslate is not None):
 	<link rel="stylesheet" href="../css/style.css">
 	</head>
 	<body><div class="container word-wrap">"""
+	#print "flag selection: {}<br>resolve character: {}".format(flagselection,resolvecharacter)
 	lines = userinput.translate(None,'\r').split('\n')
 	# Single sequence
 	if (len(lines) == 1):
-		aa = translateDNA(lines[0])
+		aa = translateDNA(lines[0],resolvecharacter,flagselection)
 		print "{}".format(('').join(aa))
 	# Multiple sequences per line
 	elif (len(lines) > 1):
 		print "<table>"
 		for sequence in lines:
-			aa = translateDNA(sequence)
+			aa = translateDNA(sequence,resolvecharacter,flagselection)
 			print "<tr><td>{}</td></tr>".format(('').join(aa))
 		print "</table>"
 	print "</div></body></html>"
