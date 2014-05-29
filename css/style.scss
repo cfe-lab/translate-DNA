@@ -68,7 +68,7 @@ textarea {
 @include btn('green', #BADA55);
 @include btn('blue', #33B5E5);
 
-.btn-round-sm {
+.round-sm {
 	@include border-radius(2px);
 }
 
