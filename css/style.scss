@@ -104,6 +104,14 @@ textarea {
 	position: relative;
 }
 
+@media (max-width: 1200px) {
+
+	.radio-wrapper:not(.first) {
+		margin: 5px 0;
+	}
+
+}
+
 .radio-label {
 	margin: 0;
 	font-weight: 300;
