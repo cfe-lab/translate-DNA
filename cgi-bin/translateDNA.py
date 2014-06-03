@@ -58,7 +58,7 @@ def resolveCodon(codon):
 # Flag = 1 will output all mixtures as "X"
 # Flag = 2 will output all synonymous mixtures as they are and all non-synonymous mixtures as "X"
 # Flag = 3 will output all mixtures in the format [A/B] if a mixture encodes for amino acid A or B
-def translateDNA(sequence, resolvecharacter, flag=2):
+def translateDNA(sequence, resolvecharacter, flag=2, highlight=True):
 	sequence = sequence.translate(None, ' \n\r\n').upper()
 	aaseq = []
 	# Check that the sequence can be divided into codons
@@ -75,13 +75,19 @@ def translateDNA(sequence, resolvecharacter, flag=2):
 		else:
 			# If flag is set to 1
 			if (flag == 1):
-				aaseq.append(resolvecharacter)
+				if (highlight):
+					aaseq.append('<span class="highlight">'+resolvecharacter+'</span>')
+				else:
+					aaseq.append(resolvecharacter)
 			# If flag is set to 2
 			elif (flag == 2):
 				unique = set([codon_dict[potential] for potential in codon])
 				# If there is more than resolved one amino acid
 				if (len(unique) > 1):
-					aaseq.append(resolvecharacter)
+					if (highlight):
+						aaseq.append('<span class="highlight">'+resolvecharacter+'</span>')
+					else:
+						aaseq.append(resolvecharacter)
 				else:
 					aaseq.append(unique.pop())
 			# If flag is set to 3
@@ -89,7 +95,10 @@ def translateDNA(sequence, resolvecharacter, flag=2):
 				unique = set([codon_dict[potential] for potential in codon])
 				# If there is more than resolved one amino acid
 				if (len(unique) > 1):
-					aaseq.append('['+('/').join(unique)+']')
+					if (highlight):
+						aaseq.append('<span class="highlight">['+('/').join(unique)+']</span>')
+					else:
+						aaseq.append('['+('/').join(unique)+']')
 				else:
 					aaseq.append(unique.pop())
 		i += 3

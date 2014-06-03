@@ -5143,3 +5143,11 @@ input[type="text"].large {
     transition: height ease-out 0.2s;
     font-size: 0;
     height: 0; }
+
+span.highlight {
+  background-color: yellow; }
+
+.chklabel {
+  margin-left: 10px;
+  font-style: italic;
+  font-weight: 300; }
