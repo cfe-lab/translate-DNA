@@ -87,6 +87,7 @@ def translateDNA(sequence, resolvecharacter, flag=2):
 			# If flag is set to 3
 			else:
 				unique = set([codon_dict[potential] for potential in codon])
+				# If there is more than resolved one amino acid
 				if (len(unique) > 1):
 					aaseq.append('['+('/').join(unique)+']')
 				else:

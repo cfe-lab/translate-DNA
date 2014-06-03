@@ -150,3 +150,20 @@ input[type="text"].large {
 	padding: 0 0 0 10px;
 	@include border-radius(0);
 }
+
+#clearbutton {
+	background-color: #FF3232;
+	text-align: center;
+	color: white;
+	height: 20px;
+	@include transition(height ease-out 0.2s);
+	&:active {
+		background-color: darken(#FF3232,30%);
+	}
+	&.hide {
+		display: block !important;
+		@include transition(height ease-out 0.2s);
+		font-size: 0;
+		height: 0;
+	}
+}

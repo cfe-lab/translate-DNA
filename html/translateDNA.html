@@ -4,6 +4,8 @@
 	<head>
 		<link rel="stylesheet" href="../css/style.css">
 		<title>DNA Translator</title>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script src="../cgi-bin/script.js"></script>
 	</head>
 	<body>
 		<div class="container">
@@ -14,8 +16,8 @@
 				</p>
 			</div>
 			<form action="../cgi-bin/translateDNA.py" method="post" id="mainform">
-				<textarea name="userinput" placeholder="Enter DNA sequence or multi-line sequences here. Fasta format also accepted" required autofocus></textarea>
-				<div class="spacer"></div>
+				<textarea id="userinput" name="userinput" placeholder="Enter DNA sequence or multi-line sequences here. Fasta format also accepted" required autofocus></textarea>
+				<div id="clearbutton" class="hide">Clear</div>
 				<div class="row">
 					<div class="col-sm-8">
 						<h2>Mode Selection</h2>
