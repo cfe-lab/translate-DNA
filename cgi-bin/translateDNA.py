@@ -1,5 +1,5 @@
 #!/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin/python
-import cgi
+import cgi, re
 
 form = cgi.FieldStorage()
 userinput = form.getvalue("userinput")
@@ -8,6 +8,11 @@ flagselection = int(form.getvalue("flagselection"))
 resolvecharacter = form.getvalue("resolvecharacter")
 if (resolvecharacter is None):
 	resolvecharacter = 'X'
+
+def parseFasta(lines):
+	result = re.findall('(>.+[\\n\\r\\n])([\\*\\-ACTGRYKMSWBHDVN\\:\\n\\r\\n]+)', lines, re.IGNORECASE)
+	result = [y.translate(None, '\n\r\n') for x in result for y in x]
+	return result
 
 codon_dict = {'TTT':'F', 'TTC':'F', 'TTA':'L', 'TTG':'L',
 			  'TCT':'S', 'TCC':'S', 'TCA':'S', 'TCG':'S',
@@ -98,6 +103,19 @@ if (runtranslate is not None):
 	</head>
 	<body><div class="container word-wrap">"""
 	#print "flag selection: {}<br>resolve character: {}".format(flagselection,resolvecharacter)
+	# To accomodate fasta format
+	if (userinput[0] == '>'):
+		lines = parseFasta(userinput)
+		#print repr(lines)
+		header = True
+		for line in lines:
+			if (header is True):
+				print "{}<br>".format(line)
+				header = False
+			else:
+				print "{}<br>".format(('').join(translateDNA(line,resolvecharacter,flagselection)).upper())
+				header = True
+		sys.exit()
 	lines = userinput.translate(None,'\r').split('\n')
 	# Single sequence
 	if (len(lines) == 1):
