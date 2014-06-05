@@ -5080,46 +5080,10 @@ textarea, input[type="text"].large {
   margin-left: 30px;
   font-style: italic; }
 
-.radio-wrapper {
-  display: inline-block;
-  max-width: 200px;
-  position: relative; }
-  .radio-wrapper:not(.first) {
-    margin-left: 10px; }
-
-@media (max-width: 1200px) {
-  .radio-wrapper:not(.first) {
-    margin: 5px 0; } }
 .radio-label {
   margin: 0;
-  font-weight: 300;
   padding: 5px;
-  min-height: 110px;
   vertical-align: top; }
-
-.radio-button {
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0;
-  z-index: 100; }
-  .radio-button + label {
-    position: relative;
-    background-color: #E9E9E9;
-    -webkit-transition: all ease-out 0.2s;
-    transition: all ease-out 0.2s;
-    top: 0;
-    left: 0; }
-  .radio-button:checked + label {
-    color: #FFF;
-    background-color: #646464;
-    -webkit-box-shadow: 5px 5px 5px 0 grey;
-    box-shadow: 5px 5px 5px 0 grey;
-    -webkit-transition: all ease-out 0.2s;
-    transition: all ease-out 0.2s;
-    position: relative;
-    top: -5px;
-    left: -5px; }
 
 input[type="text"].large {
   min-height: 0;
@@ -5129,14 +5093,15 @@ input[type="text"].large {
   border-radius: 0; }
 
 #clearbutton {
-  background-color: #FF3232;
+  background-color: #ff4c4c;
   text-align: center;
   color: white;
   height: 20px;
+  max-width: 50%;
   -webkit-transition: height ease-out 0.2s;
   transition: height ease-out 0.2s; }
   #clearbutton:active {
-    background-color: #980000; }
+    background-color: #b20000; }
   #clearbutton.hide {
     display: block !important;
     -webkit-transition: height ease-out 0.2s;
@@ -5151,3 +5116,20 @@ span.highlight {
   margin-left: 10px;
   font-style: italic;
   font-weight: 300; }
+
+.rad1 {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  border: 5px solid #DDD;
+  background-color: #999;
+  outline: none; }
+  .rad1:checked {
+    background-color: #FFA500; }
+  .rad1:focus {
+    outline: none !important; }

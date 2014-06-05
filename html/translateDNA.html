@@ -21,24 +21,38 @@
 				<div class="row">
 					<div class="col-sm-8">
 						<h2>Mode Selection</h2>
-						<div class="radio-wrapper first">
-							<input class="radio-button" type="radio" id="r1" name="flagselection" checked value="2">
-							<label class="radio-label" for="r1">Resolve synonymous codons to their respective amino acids, and non-synonymous codons to the character specified in the "Resolve character" box</label>
+						<p>
+							A codon (3 nucleotide DNA sequence) can sometimes contain mixtures. Any codon containing said mixture nucleotides could potentially resolve into multiple amino acids. 
+							For example the codon 'ARR' contains two mixture nucleotides 'R' and one 'A'.'R' means that the nucleotide is both an 'A' <span class="bold">and</span> a 'G'. 
+							This means that the codon has four possible resolutions: AAA, AAG, AGA, and AGG. AAA and AAG encode the same amino acid Lysine (K), while AGA and AGG encode the same 
+							amino acid Arginine (R). So the translation of any of these codons can result in only two different amino acids. This is called a non-synonymous resolution, where a codon
+							can resolve into more than one amino acid. The inverse is a synonymous resolution in which a codon may contain a mixture, but all potentials resolve to the same amino acid.
+							Below, you may choose how you wish to deal with mixture nucleotides in your output.
+						</p>
+						<div class="row">
+							<div class="col-sm-12">
+								<input class="rad1" type="radio" id="r1" name="flagselection" checked value="2">
+								<label class="radio-label" for="r1">Resolve synonymous mixtures, flag non-synonymous as the "resolve character" (default is "X")</label>
+							</div>
 						</div>
-						<div class="radio-wrapper">
-							<input class="radio-button" type="radio" id="r2" name="flagselection" value="1">
-							<label class="radio-label" for="r2">Resolve all mixtures to the character specified in the "Resolve character" box. Default is "X"</label>
+						<div class="row">
+							<div class="col-sm-12">
+								<input class="rad1" type="radio" id="r2" name="flagselection" value="1">
+								<label class="radio-label" for="r2">Flag all mixtures as the "resolve character"</label>
+							</div>
 						</div>
-						<div class="radio-wrapper">
-							<input class="radio-button" type="radio" id="r3" name="flagselection" value="3">
-							<label class="radio-label" for="r3">Resolve all mixtures to all possible amino acids in the format [A/B/C]</label>
+						<div class="row">
+							<div class="col-sm-12">
+								<input class="rad1" type="radio" id="r3" name="flagselection" value="3">
+								<label class="radio-label" for="r3">Resolve all mixtures, show non-synonymous in [brackets]</label>
+							</div>
 						</div>
 					</div>
 					<div class="col-sm-4">
 						<h2>Resolve character</h2>
 						<input class="large" type="text" name="resolvecharacter" placeholder="Enter single character" maxlength="1">
 						<h2>Additional Options</h2>
-						<input type="checkbox" checked id="highlight" name="highlight">
+						<input type="checkbox" checked id="highlight" name="highlight" value="True">
 						<label class="chklabel" for="highlight">Enable mixture highlighting</label>
 					</div>
 				</div>

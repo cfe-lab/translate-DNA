@@ -6,6 +6,7 @@ userinput = form.getvalue("userinput")
 runtranslate = form.getvalue("runtranslate")
 flagselection = int(form.getvalue("flagselection"))
 resolvecharacter = form.getvalue("resolvecharacter")
+highlight = form.getvalue("highlight")
 if (resolvecharacter is None):
 	resolvecharacter = 'X'
 
@@ -34,7 +35,7 @@ codon_dict = {'TTT':'F', 'TTC':'F', 'TTA':'L', 'TTG':'L',
 
 mixture_dict = {'W':'AT', 'R':'AG', 'K':'GT', 'Y':'CT',
 				'S':'CG', 'M':'AC', 'V':'AGC', 'H':'ATC',
-				'D':'ATG', 'B':'TGC', 'N':'ATGC', '-':'ATGC'}
+				'D':'ATG', 'B':'TGC', 'N':'ATGC', '-':'-'}
 
 # This amazing little function will take any codon and return a list of all possible
 # codons it could resolve to (only one if there are no mixtures)
@@ -58,7 +59,7 @@ def resolveCodon(codon):
 # Flag = 1 will output all mixtures as "X"
 # Flag = 2 will output all synonymous mixtures as they are and all non-synonymous mixtures as "X"
 # Flag = 3 will output all mixtures in the format [A/B] if a mixture encodes for amino acid A or B
-def translateDNA(sequence, resolvecharacter, flag=2, highlight=True):
+def translateDNA(sequence, resolvecharacter, flag=2, highlight='True'):
 	sequence = sequence.translate(None, ' \n\r\n').upper()
 	aaseq = []
 	# Check that the sequence can be divided into codons
@@ -75,7 +76,7 @@ def translateDNA(sequence, resolvecharacter, flag=2, highlight=True):
 		else:
 			# If flag is set to 1
 			if (flag == 1):
-				if (highlight):
+				if (highlight == 'True'):
 					aaseq.append('<span class="highlight">'+resolvecharacter+'</span>')
 				else:
 					aaseq.append(resolvecharacter)
@@ -84,7 +85,7 @@ def translateDNA(sequence, resolvecharacter, flag=2, highlight=True):
 				unique = set([codon_dict[potential] for potential in codon])
 				# If there is more than resolved one amino acid
 				if (len(unique) > 1):
-					if (highlight):
+					if (highlight == 'True'):
 						aaseq.append('<span class="highlight">'+resolvecharacter+'</span>')
 					else:
 						aaseq.append(resolvecharacter)
@@ -95,7 +96,7 @@ def translateDNA(sequence, resolvecharacter, flag=2, highlight=True):
 				unique = set([codon_dict[potential] for potential in codon])
 				# If there is more than resolved one amino acid
 				if (len(unique) > 1):
-					if (highlight):
+					if (highlight == 'True'):
 						aaseq.append('<span class="highlight">['+('/').join(unique)+']</span>')
 					else:
 						aaseq.append('['+('/').join(unique)+']')
@@ -123,19 +124,19 @@ if (runtranslate is not None):
 				print "{}<br>".format(line)
 				header = False
 			else:
-				print "{}<br>".format(('').join(translateDNA(line,resolvecharacter,flagselection)).upper())
+				print "{}<br>".format(('').join(translateDNA(line,resolvecharacter,flagselection,highlight)).upper())
 				header = True
 		sys.exit()
 	lines = userinput.translate(None,'\r').split('\n')
 	# Single sequence
 	if (len(lines) == 1):
-		aa = translateDNA(lines[0],resolvecharacter,flagselection)
+		aa = translateDNA(lines[0],resolvecharacter,flagselection,highlight)
 		print "{}".format(('').join(aa))
 	# Multiple sequences per line
 	elif (len(lines) > 1):
 		print "<table>"
 		for sequence in lines:
-			aa = translateDNA(sequence,resolvecharacter,flagselection)
+			aa = translateDNA(sequence,resolvecharacter,flagselection,highlight)
 			print "<tr><td>{}</td></tr>".format(('').join(aa))
 		print "</table>"
 	print "</div></body></html>"
