@@ -7,6 +7,7 @@ runtranslate = form.getvalue("runtranslate")
 flagselection = int(form.getvalue("flagselection"))
 resolvecharacter = form.getvalue("resolvecharacter")
 highlight = form.getvalue("highlight")
+#readingframe = int(form.getvalue("readingframe"))
 if (resolvecharacter is None):
 	resolvecharacter = 'X'
 
@@ -14,6 +15,21 @@ def parseFasta(lines):
 	result = re.findall('(>.+[\\n\\r\\n])([\\*\\-ACTGRYKMSWBHDVN\\:\\n\\r\\n]+)', lines, re.IGNORECASE)
 	result = [y.translate(None, '\n\r\n') for x in result for y in x]
 	return result
+
+def checkInput(input,readingframe):
+	errors = {'Warning':[],'Error':[]}
+
+	# If input is fasta format
+	if (input[0] == '>'):
+		input = parseFasta(input)
+		header = True
+		for line in enumerate(input):
+			if (header is True):
+				header = False
+				continue
+			else:
+				header = True
+	return errors
 
 codon_dict = {'TTT':'F', 'TTC':'F', 'TTA':'L', 'TTG':'L',
 			  'TCT':'S', 'TCC':'S', 'TCA':'S', 'TCG':'S',
@@ -41,6 +57,10 @@ mixture_dict = {'W':'AT', 'R':'AG', 'K':'GT', 'Y':'CT',
 # codons it could resolve to (only one if there are no mixtures)
 def resolveCodon(codon):
 	nonmix = []
+	if (codon in codon_dict):
+		return [codon]
+	if ('-' in codon) or ('--' in codon) or ('X' in codon) or ('XX' in codon):
+		return ['XXX']
 	for base in codon:
 		# Check for mixtures
 		if (base in mixture_dict):
@@ -64,7 +84,7 @@ def translateDNA(sequence, resolvecharacter, flag=2, highlight='True'):
 	aaseq = []
 	# Check that the sequence can be divided into codons
 	if (len(sequence) % 3 != 0):
-		return "Error: sequence length not divisible by 3. Check that you have entire sequence entered"
+		return "ERROR"
 	# If user wants to output all synonymous mixtures as are, and all non-synonymous as "resolvecharacter"
 	i = 0
 	while i < len(sequence):
@@ -114,6 +134,13 @@ if (runtranslate is not None):
 	</head>
 	<body><div class="container word-wrap">"""
 	#print "flag selection: {}<br>resolve character: {}".format(flagselection,resolvecharacter)
+	errors = checkInput(userinput,1)
+	print '<div class="hidden">'
+	for warning in errors['Warning']:
+		print "{}<br>".format(warning)
+	for error in errors['Error']:
+		print "{}<br>".format(error)
+	print '</div>'
 	# To accomodate fasta format
 	if (userinput[0] == '>'):
 		lines = parseFasta(userinput)
@@ -124,7 +151,7 @@ if (runtranslate is not None):
 				print "{}<br>".format(line)
 				header = False
 			else:
-				print "{}<br>".format(('').join(translateDNA(line,resolvecharacter,flagselection,highlight)).upper())
+				print "{}<br>".format(('').join(translateDNA(line,resolvecharacter,flagselection,highlight)))
 				header = True
 		sys.exit()
 	lines = userinput.translate(None,'\r').split('\n')
