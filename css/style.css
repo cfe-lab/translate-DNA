@@ -4999,6 +4999,9 @@ button.close {
 .word-wrap {
   word-break: break-all; }
 
+.italic {
+  font-style: italic; }
+
 textarea, input[type="text"].large {
   padding: 20px;
   display: block;
@@ -5048,12 +5051,12 @@ textarea, input[type="text"].large {
     background-color: #bada55;
     outline: none; }
 
-.btn-blue {
+.btn-blue, #sequencestag {
   background-color: #33b5e5;
   color: #FFF; }
-  .btn-blue:hover {
+  .btn-blue:hover, #sequencestag:hover {
     background-color: #60c5eb; }
-  .btn-blue:active {
+  .btn-blue:active, #sequencestag:active {
     background-color: #33b5e5;
     outline: none; }
 
@@ -5111,6 +5114,8 @@ input[type="text"].large {
 
 span.highlight {
   background-color: yellow; }
+span.bold {
+  font-weight: bold; }
 
 .chklabel {
   margin-left: 10px;
@@ -5133,3 +5138,27 @@ span.highlight {
     background-color: #FFA500; }
   .rad1:focus {
     outline: none !important; }
+
+.grey {
+  background-color: #EBEBEB; }
+
+.top-50 {
+  padding: 0 10px 10px 10px;
+  background-color: #FF9898;
+  height: 40%; }
+
+#sequences {
+  position: relative;
+  line-height: 20px; }
+
+#sequencestag {
+  position: absolute;
+  content: 'Select all';
+  width: 80px;
+  left: -80px;
+  text-align: center;
+  height: 50px;
+  line-height: 50px; }
+
+.wrapper {
+  position: relative; }

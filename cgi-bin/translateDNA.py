@@ -1,5 +1,5 @@
 #!/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin/python
-import cgi, re
+import cgi, re, sys, os
 
 form = cgi.FieldStorage()
 userinput = form.getvalue("userinput")
@@ -7,29 +7,98 @@ runtranslate = form.getvalue("runtranslate")
 flagselection = int(form.getvalue("flagselection"))
 resolvecharacter = form.getvalue("resolvecharacter")
 highlight = form.getvalue("highlight")
-#readingframe = int(form.getvalue("readingframe"))
+readingframe = int(form.getvalue("readingframe"))
 if (resolvecharacter is None):
 	resolvecharacter = 'X'
 
 def parseFasta(lines):
-	result = re.findall('(>.+[\\n\\r\\n])([\\*\\-ACTGRYKMSWBHDVN\\:\\n\\r\\n]+)', lines, re.IGNORECASE)
+	#result = re.findall('(>.+[\\n\\r\\n])([\\*\\-ACTGRYKMSWBHDVN\\:\\n\\r\\n]+)', lines, re.IGNORECASE)
+	result = re.findall(r'(>.+[\n\r]+)([^>]+)',lines,re.IGNORECASE)
 	result = [y.translate(None, '\n\r\n') for x in result for y in x]
 	return result
 
-def checkInput(input,readingframe):
-	errors = {'Warning':[],'Error':[]}
+def testWrite():
+	currentdir = os.getcwd()
+	with open(currentdir+'/tmp/test.txt','w') as f:
+		f.write(currentdir)
 
+def printErrors(errors):
+	if (any(errors.values())):
+		print '<div class="container word-wrap top-50"><h2>Warning/Error Messages</h2>'
+		for e in errors['Error']:
+			print "Error: line {}, Sequence ending at this line is not divisible by 3<br>".format(e.split(':')[0])
+		for w in errors['Warning']:
+			print "Warning: line {} codon {} contains one or two gap characters<br>".format(w.split(':')[0],w.split(':')[1])
+		print '</div>'
+	else:
+		return False
+
+# Error: 'X:L' means line X has sequence not divisible by 3
+# Warning: 'X:Y' means line X codon Y has a gap character
+def checkInput(input,readingframe):
+	input = input.strip()
+	errors = {'Warning':[],'Error':[]}
 	# If input is fasta format
 	if (input[0] == '>'):
-		input = parseFasta(input)
-		header = True
+		#input = parseFasta(input)
+		input = input.split('\n')
+		input = [x.translate(None, '\r ') for x in input]
+		seq = ''
 		for line in enumerate(input):
-			if (header is True):
-				header = False
-				continue
+			if line[1][0] != '>':
+				seq += line[1]
+				if (readingframe == 1):
+					problems = checkGaps(line[1])
+					errors['Warning'] = errors['Warning'] + [str(line[0]+1)+':'+str(x) for x in problems]
+				if (readingframe == 2):
+					problems = checkGaps(line[1][1:])
+					errors['Warning'] = errors['Warning'] + [str(line[0]+1)+':'+str(x) for x in problems]
+				if (readingframe == 3):
+					problems = checkGaps(line[1][2:])
+					errors['Warning'] = errors['Warning'] + [str(line[0]+1)+':'+str(x) for x in problems]
 			else:
-				header = True
+				#check seq for proper length
+				if (len(seq) % 3 != 0):
+					errors['Error'].append(str(line[0])+':L')
+				seq = ''
+		#check last seq for proper length
+		if (len(seq) % 3 != 0):
+			errors['Error'].append(str(line[0])+':L')
 	return errors
+
+def checkFasta(fasta, readingframe):
+	fasta = fasta.strip()
+	errors = {'Warning':[],'Error':[]}
+	fasta = fasta.split('\n')
+	fasta = [x.translate(None, '\r ') for x in fasta]
+	seq = ''
+	for line in enumerate(fasta):
+		if (line[1][0] == '>'):
+			# Check the compiled sequence length
+			remainder = len(line) % 3
+			if (len(seq[readingframe-1:-remainder]) % 3 != 0):
+				errors['Error'].append(str(line[0])+':L')
+			seq = ''
+			continue
+		seq += line[1]
+		problems = checkGaps(line[1][readingframe-1:])
+		errors['Warning'] = errors['Warning'] + [str(line[0]+1)+':'+str(x) for x in problems]
+	return errors
+
+# 0: sequence is not divisible by 3
+# [A,B,C,...]: gap character detected at codon A, B, C, ...
+def checkGaps(seq):
+	seq = seq.upper()
+	i = 0
+	gaps = []
+	while i < len(seq):
+		codon = seq[i:i+3]
+		xes = codon.count('X')
+		dashes = codon.count('-')
+		if (xes + dashes != 3) and ((1 <= xes < 3) or (1 <= dashes < 3)):
+			gaps.append(i/3 + 1)
+		i += 3
+	return gaps
 
 codon_dict = {'TTT':'F', 'TTC':'F', 'TTA':'L', 'TTG':'L',
 			  'TCT':'S', 'TCC':'S', 'TCA':'S', 'TCG':'S',
@@ -59,7 +128,9 @@ def resolveCodon(codon):
 	nonmix = []
 	if (codon in codon_dict):
 		return [codon]
-	if ('-' in codon) or ('--' in codon) or ('X' in codon) or ('XX' in codon):
+	elif (codon.count('-') + codon.count('X') == 3):
+		return ['---']
+	elif (1 <= codon.count('-') <= 2) or (1 <= codon.count('X') <= 2):
 		return ['XXX']
 	for base in codon:
 		# Check for mixtures
@@ -83,8 +154,8 @@ def translateDNA(sequence, resolvecharacter, flag=2, highlight='True'):
 	sequence = sequence.translate(None, ' \n\r\n').upper()
 	aaseq = []
 	# Check that the sequence can be divided into codons
-	if (len(sequence) % 3 != 0):
-		return "ERROR"
+	#if (len(sequence) % 3 != 0):
+	#	return "ERROR"
 	# If user wants to output all synonymous mixtures as are, and all non-synonymous as "resolvecharacter"
 	i = 0
 	while i < len(sequence):
@@ -131,28 +202,40 @@ if (runtranslate is not None):
 	print """<!DOCTYPE html><html>
 	<head>
 	<link rel="stylesheet" href="../css/style.css">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="../cgi-bin/script.js"></script>
 	</head>
-	<body><div class="container word-wrap">"""
+	<body>"""
 	#print "flag selection: {}<br>resolve character: {}".format(flagselection,resolvecharacter)
-	errors = checkInput(userinput,1)
-	print '<div class="hidden">'
-	for warning in errors['Warning']:
-		print "{}<br>".format(warning)
-	for error in errors['Error']:
-		print "{}<br>".format(error)
-	print '</div>'
+	errors = checkFasta(userinput,readingframe)
+	printErrors(errors)
+	print '<div class="spacer"></div><div class="container word-wrap wrapper grey"><div id="sequencestag">Select all</div><div id="sequences">'
 	# To accomodate fasta format
 	if (userinput[0] == '>'):
 		lines = parseFasta(userinput)
 		#print repr(lines)
 		header = True
+		linecount = 1
 		for line in lines:
 			if (header is True):
-				print "{}<br>".format(line)
+				print "<span id=line{}>{}</span><br>".format(linecount,line)
 				header = False
 			else:
-				print "{}<br>".format(('').join(translateDNA(line,resolvecharacter,flagselection,highlight)))
+				# Reading frame 1
+				if (readingframe == 1):
+					remainder = len(line) % 3
+				# Reading frame 2
+				elif (readingframe == 2):
+					remainder = len(line[1:]) % 3
+				# Reading frame 3
+				else:
+					remainder = len(line[2:]) % 3
+				if (remainder == 0):
+					print "<span id=line{}>{}</span><br>".format(linecount,('').join(translateDNA(line[readingframe-1:],resolvecharacter,flagselection,highlight)))
+				else:
+					print "<span id=line{}>{}</span><br>".format(linecount,('').join(translateDNA(line[readingframe-1:-remainder],resolvecharacter,flagselection,highlight)))
 				header = True
+			linecount += 1
 		sys.exit()
 	lines = userinput.translate(None,'\r').split('\n')
 	# Single sequence
@@ -166,4 +249,4 @@ if (runtranslate is not None):
 			aa = translateDNA(sequence,resolvecharacter,flagselection,highlight)
 			print "<tr><td>{}</td></tr>".format(('').join(aa))
 		print "</table>"
-	print "</div></body></html>"
+	print "</div></div></body></html>"

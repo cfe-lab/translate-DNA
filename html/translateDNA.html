@@ -31,19 +31,19 @@
 						</p>
 						<div class="row">
 							<div class="col-sm-12">
-								<input class="rad1" type="radio" id="r1" name="flagselection" checked value="2">
+								<input type="radio" id="r1" name="flagselection" checked value="2">
 								<label class="radio-label" for="r1">Resolve synonymous mixtures, flag non-synonymous as the "resolve character" (default is "X")</label>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-sm-12">
-								<input class="rad1" type="radio" id="r2" name="flagselection" value="1">
+								<input type="radio" id="r2" name="flagselection" value="1">
 								<label class="radio-label" for="r2">Flag all mixtures as the "resolve character"</label>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-sm-12">
-								<input class="rad1" type="radio" id="r3" name="flagselection" value="3">
+								<input type="radio" id="r3" name="flagselection" value="3">
 								<label class="radio-label" for="r3">Resolve all mixtures, show non-synonymous in [brackets]</label>
 							</div>
 						</div>
@@ -54,6 +54,14 @@
 						<h2>Additional Options</h2>
 						<input type="checkbox" checked id="highlight" name="highlight" value="True">
 						<label class="chklabel" for="highlight">Enable mixture highlighting</label>
+						<h2>Reading Frame</h2>
+						<input type="radio" id="r4" name="readingframe" value="1" checked>
+						<label class="radio-label" for="r4">Frame 1</label>
+						<input type="radio" id="r5" name="readingframe" value="2">
+						<label class="radio-label" for="r5">Frame 2</label>
+						<input type="radio" id="r6" name="readingframe" value="3">
+						<label class="radio-label" for="r6">Frame 3</label>
+						<p class="italic">*Note that reading frames 2 and 3 will not translate the last codon if the sequence is divisible by 3</p>
 					</div>
 				</div>
 				<div class="spacer"></div>

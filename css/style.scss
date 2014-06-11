@@ -29,6 +29,10 @@ $theme: #33CC33;
 	word-break: break-all;
 }
 
+.italic {
+	font-style: italic;
+}
+
 textarea {
 	padding: 20px;
 	display: block;
@@ -127,8 +131,13 @@ input[type="text"].large {
 	}
 }
 
-span.highlight {
-	background-color: yellow;
+span {
+	&.highlight {
+		background-color: yellow;
+	}
+	&.bold {
+		font-weight: bold;	
+	}
 }
 
 .chklabel {
@@ -151,4 +160,34 @@ span.highlight {
 	&:focus {
 		outline: none !important;
 	}
+}
+
+.grey {
+	background-color: #EBEBEB;
+}
+
+.top-50 {
+	padding: 0 10px 10px 10px;
+	background-color: #FF9898;
+	height: 40%;
+}
+
+#sequences {
+	position: relative;
+	line-height: 20px;
+}
+
+#sequencestag {
+	position: absolute;
+	content: 'Select all';
+	width: 80px;
+	left: -80px;
+	@extend .btn-blue;
+	text-align: center;
+	height: 50px;
+	line-height: 50px;
+}
+
+.wrapper {
+	position: relative;
 }
