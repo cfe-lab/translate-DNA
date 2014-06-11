@@ -33,39 +33,6 @@ def printErrors(errors):
 	else:
 		return False
 
-# Error: 'X:L' means line X has sequence not divisible by 3
-# Warning: 'X:Y' means line X codon Y has a gap character
-def checkInput(input,readingframe):
-	input = input.strip()
-	errors = {'Warning':[],'Error':[]}
-	# If input is fasta format
-	if (input[0] == '>'):
-		#input = parseFasta(input)
-		input = input.split('\n')
-		input = [x.translate(None, '\r ') for x in input]
-		seq = ''
-		for line in enumerate(input):
-			if line[1][0] != '>':
-				seq += line[1]
-				if (readingframe == 1):
-					problems = checkGaps(line[1])
-					errors['Warning'] = errors['Warning'] + [str(line[0]+1)+':'+str(x) for x in problems]
-				if (readingframe == 2):
-					problems = checkGaps(line[1][1:])
-					errors['Warning'] = errors['Warning'] + [str(line[0]+1)+':'+str(x) for x in problems]
-				if (readingframe == 3):
-					problems = checkGaps(line[1][2:])
-					errors['Warning'] = errors['Warning'] + [str(line[0]+1)+':'+str(x) for x in problems]
-			else:
-				#check seq for proper length
-				if (len(seq) % 3 != 0):
-					errors['Error'].append(str(line[0])+':L')
-				seq = ''
-		#check last seq for proper length
-		if (len(seq) % 3 != 0):
-			errors['Error'].append(str(line[0])+':L')
-	return errors
-
 def checkFasta(fasta, readingframe):
 	fasta = fasta.strip()
 	errors = {'Warning':[],'Error':[]}
