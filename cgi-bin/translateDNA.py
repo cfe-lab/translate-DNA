@@ -42,14 +42,16 @@ def checkFasta(fasta, readingframe):
 	for line in enumerate(fasta):
 		if (line[1][0] == '>'):
 			# Check the compiled sequence length
-			remainder = len(line) % 3
-			if (len(seq[readingframe-1:-remainder]) % 3 != 0):
+			remainder = len(seq) % 3
+			if (len(seq[readingframe-1:]) % 3 != 0):
 				errors['Error'].append(str(line[0])+':L')
 			seq = ''
 			continue
 		seq += line[1]
 		problems = checkGaps(line[1][readingframe-1:])
 		errors['Warning'] = errors['Warning'] + [str(line[0]+1)+':'+str(x) for x in problems]
+	if (len(seq[readingframe-1:]) % 3 != 0):
+		errors['Error'].append(str(line[0]+1)+':L')
 	return errors
 
 # 0: sequence is not divisible by 3
@@ -180,7 +182,6 @@ if (runtranslate is not None):
 	# To accomodate fasta format
 	if (userinput[0] == '>'):
 		lines = parseFasta(userinput)
-		#print repr(lines)
 		header = True
 		linecount = 1
 		for line in lines:
@@ -188,15 +189,7 @@ if (runtranslate is not None):
 				print "<span id=line{}>{}</span><br>".format(linecount,line)
 				header = False
 			else:
-				# Reading frame 1
-				if (readingframe == 1):
-					remainder = len(line) % 3
-				# Reading frame 2
-				elif (readingframe == 2):
-					remainder = len(line[1:]) % 3
-				# Reading frame 3
-				else:
-					remainder = len(line[2:]) % 3
+				remainder = len(line[readingframe-1:]) % 3
 				if (remainder == 0):
 					print "<span id=line{}>{}</span><br>".format(linecount,('').join(translateDNA(line[readingframe-1:],resolvecharacter,flagselection,highlight)))
 				else:
