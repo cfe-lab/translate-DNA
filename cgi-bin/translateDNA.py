@@ -14,7 +14,7 @@ if (resolvecharacter is None):
 def parseFasta(lines):
 	#result = re.findall('(>.+[\\n\\r\\n])([\\*\\-ACTGRYKMSWBHDVN\\:\\n\\r\\n]+)', lines, re.IGNORECASE)
 	result = re.findall(r'(>.+[\n\r]+)([^>]+)',lines,re.IGNORECASE)
-	result = [y.translate(None, '\n\r\n') for x in result for y in x]
+	result = [y.translate(None, '\n\r\n ') for x in result for y in x]
 	return result
 
 def testWrite():
@@ -23,13 +23,21 @@ def testWrite():
 		f.write(currentdir)
 
 def printErrors(errors):
+	dontrun = False
 	if (any(errors.values())):
 		print '<div class="container word-wrap top-50"><h2>Warning/Error Messages</h2>'
 		for e in errors['Error']:
-			print "Error: line {}, Sequence ending at this line is not divisible by 3<br>".format(e.split(':')[0])
+			e = e.split(':')
+			if (len(e) > 2) and (e[2] == 'I'):
+				print "Error: line {}, Sequence '{}' at this line contains illegal characters, translation stopped<br>".format(e[0],e[1])
+				dontrun = True
+			else:
+				print "Error: line {}, Sequence ending at this line is not divisible by 3<br>".format(e[0])
 		for w in errors['Warning']:
 			print "Warning: line {} codon {} contains one or two gap characters<br>".format(w.split(':')[0],w.split(':')[1])
 		print '</div>'
+	elif (dontrun == True):
+		sys.exit()
 	else:
 		return False
 
@@ -41,17 +49,25 @@ def checkFasta(fasta, readingframe):
 	seq = ''
 	for line in enumerate(fasta):
 		if (line[1][0] == '>'):
+			#Check for illegal characters
+			if (seq):
+				if re.search('[^ACTGRYKMSWBHDVNX\\:\\-\\*]',seq, re.IGNORECASE):
+					errors['Error'].append(str(line[0])+':'+seq+':I')
 			# Check the compiled sequence length
 			remainder = len(seq) % 3
 			if (len(seq[readingframe-1:]) % 3 != 0):
 				errors['Error'].append(str(line[0])+':L')
 			seq = ''
 			continue
-		seq += line[1]
+		seq += line[1].upper()
 		problems = checkGaps(line[1][readingframe-1:])
 		errors['Warning'] = errors['Warning'] + [str(line[0]+1)+':'+str(x) for x in problems]
 	if (len(seq[readingframe-1:]) % 3 != 0):
 		errors['Error'].append(str(line[0]+1)+':L')
+	#Check for illegal characters
+	if (seq):
+		if re.search('[^ACTGRYKMSWBHDVNX\\:\\-\\*]',seq, re.IGNORECASE):
+			errors['Error'].append(str(line[0])+':'+seq+':I')
 	return errors
 
 # 0: sequence is not divisible by 3
@@ -85,7 +101,7 @@ codon_dict = {'TTT':'F', 'TTC':'F', 'TTA':'L', 'TTG':'L',
 			  'GCT':'A', 'GCC':'A', 'GCA':'A', 'GCG':'A',
 			  'GAT':'D', 'GAC':'D', 'GAA':'E', 'GAG':'E',
 			  'GGT':'G', 'GGC':'G', 'GGA':'G', 'GGG':'G',
-			  '---':'-', 'XXX':'?'}
+			  '---':'-', 'XXX':'-', '???':'?'}
 
 mixture_dict = {'W':'AT', 'R':'AG', 'K':'GT', 'Y':'CT',
 				'S':'CG', 'M':'AC', 'V':'AGC', 'H':'ATC',

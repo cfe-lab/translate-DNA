@@ -178,13 +178,11 @@ span {
 }
 
 #sequencestag {
-	position: absolute;
-	content: 'Select all';
+	position: fixed;
+	margin-left: -95px;
 	width: 80px;
-	left: -80px;
 	@extend .btn-blue;
 	text-align: center;
-	height: 50px;
 	line-height: 50px;
 }
 
