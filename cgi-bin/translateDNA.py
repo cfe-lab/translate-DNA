@@ -216,13 +216,13 @@ if (runtranslate is not None):
 	lines = userinput.translate(None,'\r').split('\n')
 	# Single sequence
 	if (len(lines) == 1):
-		aa = translateDNA(lines[0],resolvecharacter,flagselection,highlight)
+		aa = translateDNA(lines[0][readingframe-1:],resolvecharacter,flagselection,highlight)
 		print "{}".format(('').join(aa))
 	# Multiple sequences per line
 	elif (len(lines) > 1):
 		print "<table>"
 		for sequence in lines:
-			aa = translateDNA(sequence,resolvecharacter,flagselection,highlight)
+			aa = translateDNA(sequence[readingframe-1:],resolvecharacter,flagselection,highlight)
 			print "<tr><td>{}</td></tr>".format(('').join(aa))
 		print "</table>"
 	print "</div></div></body></html>"
