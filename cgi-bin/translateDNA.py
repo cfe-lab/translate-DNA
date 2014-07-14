@@ -62,12 +62,23 @@ def checkFasta(fasta, readingframe):
 		seq += line[1].upper()
 		problems = checkGaps(line[1][readingframe-1:])
 		errors['Warning'] = errors['Warning'] + [str(line[0]+1)+':'+str(x) for x in problems]
-	if (len(seq[readingframe-1:]) % 3 != 0):
-		errors['Error'].append(str(line[0]+1)+':L')
 	#Check for illegal characters
 	if (seq):
 		if re.search('[^ACTGRYKMSWBHDVNX\\:\\-\\*]',seq, re.IGNORECASE):
 			errors['Error'].append(str(line[0])+':'+seq+':I')
+	return errors
+
+def checkSeqs(seqs, readingframe):
+	lcount = 1
+	errors = {'Warning':[],'Error':[]}
+	for seq in seqs:
+		if re.search('[^ACTGRYKMSWBHDVNX\\:\\-\\*]',seq, re.IGNORECASE):
+			errors['Error'].append(str(lcount)+':'+seq+':I')
+		# Check the compiled sequence length
+		remainder = len(seq) % 3
+		if (len(seq[readingframe-1:]) % 3 != 0):
+			errors['Error'].append(str(lcount)+':L')
+		lcount += 1
 	return errors
 
 # 0: sequence is not divisible by 3
@@ -116,7 +127,7 @@ def resolveCodon(codon):
 	elif (codon.count('-') + codon.count('X') == 3):
 		return ['---']
 	elif (1 <= codon.count('-') <= 2) or (1 <= codon.count('X') <= 2):
-		return ['XXX']
+		return ['???']
 	for base in codon:
 		# Check for mixtures
 		if (base in mixture_dict):
@@ -192,11 +203,11 @@ if (runtranslate is not None):
 	</head>
 	<body>"""
 	#print "flag selection: {}<br>resolve character: {}".format(flagselection,resolvecharacter)
-	errors = checkFasta(userinput,readingframe)
-	printErrors(errors)
-	print '<div class="spacer"></div><div class="container word-wrap wrapper grey"><div id="sequencestag">Select all</div><div id="sequences">'
 	# To accomodate fasta format
 	if (userinput[0] == '>'):
+		errors = checkFasta(userinput,readingframe)
+		printErrors(errors)
+		print '<div class="spacer"></div><div class="container word-wrap wrapper grey"><div id="sequencestag">Select all</div><div id="sequences">'
 		lines = parseFasta(userinput)
 		header = True
 		linecount = 1
@@ -214,6 +225,9 @@ if (runtranslate is not None):
 			linecount += 1
 		sys.exit()
 	lines = userinput.translate(None,'\r').split('\n')
+	errors = checkSeqs(lines, readingframe)
+	printErrors(errors)
+	print '<div class="spacer"></div><div class="container word-wrap wrapper grey"><div id="sequencestag">Select all</div><div id="sequences">'
 	# Single sequence
 	if (len(lines) == 1):
 		aa = translateDNA(lines[0][readingframe-1:],resolvecharacter,flagselection,highlight)
