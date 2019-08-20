@@ -1,13 +1,15 @@
-<!DOCTYPE html>
+{% extends "tool_base.html" %}
+{% load static %}
 
-<html>
-	<head>
-		<link rel="stylesheet" href="../css/style.css">
+{% block head %}
+		<link rel="stylesheet" href="{% static "dna_css/style.css" %}">
 		<title>DNA Translator</title>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-		<script src="../cgi-bin/script.js"></script>
-	</head>
-	<body>
+		<script src="{% static "dna_script.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+	<div id="body-div">
 		<div class="container">
 			<div class="title">
 				<h1>DNA Translator</h1>
@@ -15,8 +17,9 @@
 					Translate one or more lines of DNA sequence[s] into their corresponding amino acids
 				</p>
 			</div>
-			<form action="../cgi-bin/translateDNA.py" method="post" id="mainform">
-				<textarea id="userinput" name="userinput" placeholder="Enter DNA sequence or multi-line sequences here. Fasta format also accepted" required autofocus></textarea>
+			<form action="results/" method="post" id="mainform">
+				{% csrf_token %}
+				<textarea style="font-family:monospace;" id="userinput" name="userinput" placeholder="Enter DNA sequence or multi-line sequences here. Fasta format also accepted" required autofocus></textarea>
 				<div id="clearbutton" class="hide">Clear</div>
 				<div class="row">
 					<div class="col-sm-8">
@@ -68,5 +71,5 @@
 				<button class="btn-large btn-blank round-sm btn-blue" value="on" name="runtranslate" type="submit" form="mainform">Translate</button>
 			</form>
 		</div>
-	</body>
-</html>
+	</div>
+{% endblock %}
